@@ -13,7 +13,7 @@ import App from './App'
 Vue.use(BootstrapVue)
 Vue.use(VueI18n)
 
-let locale = localStorage.getItem('lang')
+let locale = window.localStorage.getItem('lang')
 if (!locale) {
   locale = navigator.language.startsWith('zh') ? 'zh' : 'en'
 }
@@ -25,6 +25,7 @@ const i18n = new VueI18n({
   }
 })
 
+/* eslint-disable no-new */
 new Vue({
   el: '#root',
   components: {

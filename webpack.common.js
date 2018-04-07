@@ -1,5 +1,6 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = {
   entry: path.resolve(__dirname, 'src', 'main.js'),
@@ -19,12 +20,7 @@ module.exports = {
     rules: [
       {
         test: /\.js$/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['env']
-          }
-        },
+        use: ['babel-loader'],
         exclude: /node_modules/
       },
       {
@@ -41,6 +37,10 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src', 'index.html')
-    })
+    }),
+    new CopyWebpackPlugin([{
+      from: path.resolve(__dirname, 'static'),
+      to: path.resolve(__dirname, 'docs', 'static')
+    }])
   ]
 }
