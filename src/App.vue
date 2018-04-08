@@ -46,7 +46,7 @@ export default {
         return
       }
 
-      this.imageSrc = `/static/${this.templateId}/example${this.templateInfo.extension}`
+      this.imageSrc = `static/${this.templateId}/example${this.templateInfo.extension}`
       this.template = await Template.createAsync(this.templateId)
     },
     async generate () {
