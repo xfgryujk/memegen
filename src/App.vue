@@ -1,28 +1,60 @@
 <template>
-  <div v-if="template">
-    <h1>{{ template.name }}</h1>
-    <b-img fluid :src="`/static/${template.id}/example${template.extension}`" />
+  <div v-if="templateInfo">
+    <h1>{{ templateInfo.name }}</h1>
+    <b-img fluid :src="imageSrc" />
+    <b-form @submit.prevent="generate" v-if="template">
+      <b-form-group v-for="(textInfo, index) in template.textInfo" :key="index" :label="`第${index + 1}句`" :label-for="`text-${index}`">
+        <b-form-input :id="`text-${index}`" type="text" v-model="textInfo.text" :placeholder="textInfo.default"></b-form-input>
+      </b-form-group>
+      <b-button type="submit" variant="primary">生成</b-button>
+    </b-form>
   </div>
 </template>
 
 <script>
-import templates from './templates'
+import templateList from './templateList'
+import { Template } from './memegen'
 
 export default {
   name: 'app',
-  components: {
-  },
   data () {
     return {
+      imageSrc: '',
+      template: null
     }
   },
   computed: {
-    template () {
-      if (!this.$route.params.template in templates) {
-        return null
+    templateId () {
+      return this.$route.params.id
+    },
+    templateInfo () {
+      return templateList[this.templateId] || null
+    }
+  },
+  watch: {
+    async $route (to) {
+      await this.updateTemplate()
+    }
+  },
+  async mounted () {
+    await this.updateTemplate()
+  },
+  methods: {
+    async updateTemplate () {
+      this.template = null
+      if (!this.templateInfo) {
+        return
       }
-      let tpl = templates[this.$route.params.template]
-      return Object.assign({}, tpl, { id: this.$route.params.template })
+
+      this.imageSrc = `/static/${this.templateId}/example${this.templateInfo.extension}`
+      this.template = await Template.createAsync(this.templateId)
+    },
+    async generate () {
+      if (!this.templateInfo) {
+        return
+      }
+
+      await this.template.generate()
     }
   }
 }
@@ -32,5 +64,10 @@ export default {
 h1 {
   margin-top: 20px;
   margin-bottom: 15px;
+}
+
+form {
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 </style>

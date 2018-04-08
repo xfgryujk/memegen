@@ -4,21 +4,21 @@
       模板
     </div>
     <b-nav vertical>
-      <b-nav-item v-for="(tpl, id) in templates" :key="id" :to="`/${id}`">
-        {{ tpl.name }}
+      <b-nav-item v-for="(info, id) in templateList" :key="id" :to="`/${id}`">
+        {{ info.name }}
       </b-nav-item>
     </b-nav>
   </div>
 </template>
 
 <script>
-import templates from '../templates'
+import templateList from '../templateList'
 
 export default {
   name: 'sidebar',
   data () {
     return {
-      templates: templates
+      templateList: templateList
     }
   }
 };
@@ -26,6 +26,9 @@ export default {
 
 <style scoped>
 .sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
   border-right: 1px solid rgba(0, 0, 0, 0.07);
 }
 
@@ -38,8 +41,12 @@ export default {
 }
 
 .sidebar .nav {
-  height: 100vh;
+  height: calc(100% - 31px - 1.5rem);
   flex-wrap: nowrap;
   overflow-y: scroll;
+}
+
+a.active {
+  color: black;
 }
 </style>
