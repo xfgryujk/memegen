@@ -40,6 +40,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "bootstrap-vue": "^2.0.0-rc.6",
+    "gif.js.optimized": "^1.0.1",
     "omggif": "^1.0.9",
     "vue": "^2.5.16",
     "vue-router": "^3.0.1"

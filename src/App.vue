@@ -54,7 +54,9 @@ export default {
         return
       }
 
-      await this.template.generate()
+      let blob = await this.template.generate()
+      // Test
+      window.open(window.URL.createObjectURL(blob))
     }
   }
 }
