@@ -1,3 +1,14 @@
-[
-    "sorry"
-]
+{
+    "sorry": {
+        "name": "为所欲为",
+        "extension": ".gif"
+    },
+    "wangjingze": {
+        "name": "真香",
+        "extension": ".gif"
+    },
+    "dagong": {
+        "name": "窃格瓦拉",
+        "extension": ".gif"
+    }
+}
