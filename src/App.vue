@@ -34,6 +34,9 @@ export default {
   watch: {
     async $route (to) {
       await this.updateTemplate()
+    },
+    imageSrc (val, oldVal) {
+      window.URL.revokeObjectURL(oldVal)
     }
   },
   async mounted () {
@@ -54,9 +57,8 @@ export default {
         return
       }
 
-      let blob = await this.template.generate()
-      // Test
-      window.open(window.URL.createObjectURL(blob))
+      let resultBlob = await this.template.generate()
+      this.imageSrc = window.URL.createObjectURL(resultBlob)
     }
   }
 }
