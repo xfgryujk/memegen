@@ -5,8 +5,7 @@ import axios from 'axios'
 import templateList from './templateList'
 
 export class Template {
-  // Use createAsync() instead
-  constructor (id, textInfo, imageData) {
+  constructor (id) {
     // In templateList.json
     this.id = id
     let templateInfo = templateList[id]
@@ -14,26 +13,37 @@ export class Template {
     this.extension = templateInfo.extension
 
     // In static/<id>/template.json
-    this.textInfo = textInfo
-    for (let info of textInfo) {
-      info.text = ''
-    }
+    this.textInfo = []
+    axios.get(`static/${this.id}/template.json`)
+      .then(response => {
+        let textInfo = response.data
+        for (let info of textInfo) {
+          info.text = ''
+        }
+        this.textInfo = textInfo
+      })
 
-    this._gifReader = new omggif.GifReader(imageData)
+    this._gifReader = null
+    axios.get(`static/${this.id}/template${templateInfo.extension}`, {
+      responseType: 'arraybuffer'
+    }).then(response => {
+      let imageData = new Uint8Array(response.data)
+      this._gifReader = new omggif.GifReader(imageData)
+    })
+
+    this.isGenerating = false
   }
 
-  static async createAsync (id) {
-    let templateInfo = templateList[id]
-    let [textInfoResponse, imageDataResponse] = await Promise.all([
-      axios.get(`static/${id}/template.json`),
-      axios.get(`static/${id}/template${templateInfo.extension}`, {
-        responseType: 'arraybuffer'
-      })
-    ])
-    return new Template(id, textInfoResponse.data, new Uint8Array(imageDataResponse.data))
+  isBusy () {
+    return this.textInfo.length === 0 || this._gifReader == null || this.isGenerating
   }
 
   async generate () {
+    if (this.isBusy()) {
+      return null
+    }
+    this.isGenerating = true
+
     // Get image size
     let frame0Info = this._gifReader.frameInfo(0)
     let [width, height] = [frame0Info.width, frame0Info.height]
@@ -92,7 +102,8 @@ export class Template {
     }
 
     return new Promise((resolve, reject) => {
-      gif.on('finished', function (blob) {
+      gif.on('finished', blob => {
+        this.isGenerating = false
         resolve(blob)
       })
       gif.render()

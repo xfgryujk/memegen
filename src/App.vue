@@ -6,7 +6,8 @@
       <b-form-group v-for="(textInfo, index) in template.textInfo" :key="index" :label="`第${index + 1}句`" :label-for="`text-${index}`">
         <b-form-input :id="`text-${index}`" type="text" v-model="textInfo.text" :placeholder="textInfo.default"></b-form-input>
       </b-form-group>
-      <b-button type="submit" variant="primary">生成</b-button>
+      <b-button type="submit" variant="primary" :disabled="template.isBusy()">生成</b-button>
+      <b-alert variant="success" dismissible :show="showSuccess" @dismissed="showSuccess=false">生成完毕</b-alert>
     </b-form>
   </div>
 </template>
@@ -20,7 +21,8 @@ export default {
   data () {
     return {
       imageSrc: '',
-      template: null
+      template: null,
+      showSuccess: false
     }
   },
   computed: {
@@ -32,25 +34,25 @@ export default {
     }
   },
   watch: {
-    async $route (to) {
-      await this.updateTemplate()
+    $route (to) {
+      this.updateTemplate()
     },
     imageSrc (val, oldVal) {
       window.URL.revokeObjectURL(oldVal)
     }
   },
-  async mounted () {
-    await this.updateTemplate()
+  mounted () {
+    this.updateTemplate()
   },
   methods: {
-    async updateTemplate () {
+    updateTemplate () {
       this.template = null
       if (!this.templateInfo) {
         return
       }
 
       this.imageSrc = `static/${this.templateId}/example${this.templateInfo.extension}`
-      this.template = await Template.createAsync(this.templateId)
+      this.template = new Template(this.templateId)
     },
     async generate () {
       if (!this.templateInfo) {
@@ -59,6 +61,7 @@ export default {
 
       let resultBlob = await this.template.generate()
       this.imageSrc = window.URL.createObjectURL(resultBlob)
+      this.showSuccess = true
     }
   }
 }
@@ -73,5 +76,9 @@ h1 {
 form {
   margin-top: 10px;
   margin-bottom: 10px;
+}
+
+.btn {
+  margin-bottom: 16px;
 }
 </style>
