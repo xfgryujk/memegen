@@ -13,37 +13,63 @@ export class Template {
     this.name = templateInfo.name
     this.extension = templateInfo.extension
 
+    // To calculate loading progress
+    this._templateTotalLength = this._imageTotalLength = 2 * 1024 * 1024
+    this._templateLoadedLength = this._imageLoadedLength = 0
+
     // In static/<id>/template.json
     this.textInfo = []
-    axios.get(`${STATIC_URL}/${this.id}/template.json`)
-      .then(response => {
-        let textInfo = response.data
-        for (let info of textInfo) {
-          info.text = ''
-        }
-        this.textInfo = textInfo
-      })
+    axios.get(`${STATIC_URL}/${this.id}/template.json`, {
+      onDownloadProgress: event => {
+        [this._templateTotalLength, this._templateLoadedLength] = [event.total, event.loaded]
+      }
+    }).then(response => {
+      let textInfo = response.data
+      for (let info of textInfo) {
+        info.text = ''
+      }
+      this.textInfo = textInfo
+    })
 
     this._gifReader = null
     axios.get(`${STATIC_URL}/${this.id}/template${templateInfo.extension}`, {
-      responseType: 'arraybuffer'
+      responseType: 'arraybuffer',
+      onDownloadProgress: event => {
+        [this._imageTotalLength, this._imageLoadedLength] = [event.total, event.loaded]
+      }
     }).then(response => {
       let imageData = new Uint8Array(response.data)
       this._gifReader = new omggif.GifReader(imageData)
     })
 
-    this.isGenerating = false
+    // -1 means not generating
+    this._generatingProgress = -1
   }
 
-  isBusy () {
-    return this.textInfo.length === 0 || this._gifReader == null || this.isGenerating
+  isLoading () {
+    return this.textInfo.length === 0 || this._gifReader == null
+  }
+
+  isGenerating () {
+    return this._generatingProgress >= 0
+  }
+
+  // Range: [0, 1]
+  getLoadingProgress () {
+    return (this._templateLoadedLength + this._imageLoadedLength) /
+           (this._templateTotalLength + this._imageTotalLength)
+  }
+
+  // Range: [0, 1]
+  getGeneratingProgress () {
+    return this._generatingProgress >= 0 ? this._generatingProgress : 0
   }
 
   async generate () {
-    if (this.isBusy()) {
+    if (this.isLoading() || this.isGenerating()) {
       return null
     }
-    this.isGenerating = true
+    this._generatingProgress = 0
 
     // Get image size
     let frame0Info = this._gifReader.frameInfo(0)
@@ -63,8 +89,8 @@ export class Template {
     // Init GIF encoder
     let gif = new GIF({
       workerScript: 'static/js/gif.worker.js',
-      workers: 2,
-      quality: 10,
+      workers: 3,
+      quality: 16,
       width: width,
       height: height
     })
@@ -103,8 +129,11 @@ export class Template {
     }
 
     return new Promise((resolve, reject) => {
+      gif.on('progress', progress => {
+        this._generatingProgress = progress
+      })
       gif.on('finished', blob => {
-        this.isGenerating = false
+        this._generatingProgress = -1
         resolve(blob)
       })
       gif.render()

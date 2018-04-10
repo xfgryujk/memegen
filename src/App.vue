@@ -2,12 +2,13 @@
   <div v-if="templateInfo">
     <h1>{{ templateInfo.name }}</h1>
     <b-img fluid :src="imageSrc" />
+    <b-progress :value="progress" :max="100" animated v-if="progress >= 0"></b-progress>
+    <b-alert variant="success" dismissible :show="showSuccess" @dismissed="showSuccess=false">生成完毕</b-alert>
     <b-form @submit.prevent="generate" v-if="template">
       <b-form-group v-for="(textInfo, index) in template.textInfo" :key="index" :label="`第${index + 1}句`" :label-for="`text-${index}`">
         <b-form-input :id="`text-${index}`" type="text" v-model="textInfo.text" :placeholder="textInfo.default"></b-form-input>
       </b-form-group>
-      <b-button type="submit" variant="primary" :disabled="template.isBusy()">生成</b-button>
-      <b-alert variant="success" dismissible :show="showSuccess" @dismissed="showSuccess=false">生成完毕</b-alert>
+      <b-button type="submit" variant="primary" :disabled="isBusy">生成</b-button>
     </b-form>
   </div>
 </template>
@@ -22,8 +23,8 @@ export default {
   data () {
     return {
       imageSrc: '',
-      template: null,
-      showSuccess: false
+      showSuccess: false,
+      template: null
     }
   },
   computed: {
@@ -32,6 +33,19 @@ export default {
     },
     templateInfo () {
       return templateList[this.templateId] || null
+    },
+    progress () {
+      if (!this.template) {
+        return -1 // Don't show progress
+      } else if (this.template.isLoading()) {
+        return this.template.getLoadingProgress() * 100
+      } else if (this.template.isGenerating()) {
+        return this.template.getGeneratingProgress() * 100
+      }
+      return -1
+    },
+    isBusy () {
+      return this.template.isLoading() || this.template.isGenerating()
     }
   },
   watch: {
@@ -70,16 +84,12 @@ export default {
 
 <style scoped>
 h1 {
-  margin-top: 20px;
-  margin-bottom: 15px;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
 }
 
-form {
-  margin-top: 10px;
-  margin-bottom: 10px;
-}
-
-.btn {
-  margin-bottom: 16px;
+.progress, .alert, form {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 </style>
