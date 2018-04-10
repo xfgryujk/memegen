@@ -3,6 +3,7 @@ import GIF from 'gif.js.optimized'
 import axios from 'axios'
 
 import templateList from './templateList'
+import { STATIC_URL } from './settings'
 
 export class Template {
   constructor (id) {
@@ -14,7 +15,7 @@ export class Template {
 
     // In static/<id>/template.json
     this.textInfo = []
-    axios.get(`static/${this.id}/template.json`)
+    axios.get(`${STATIC_URL}/${this.id}/template.json`)
       .then(response => {
         let textInfo = response.data
         for (let info of textInfo) {
@@ -24,7 +25,7 @@ export class Template {
       })
 
     this._gifReader = null
-    axios.get(`static/${this.id}/template${templateInfo.extension}`, {
+    axios.get(`${STATIC_URL}/${this.id}/template${templateInfo.extension}`, {
       responseType: 'arraybuffer'
     }).then(response => {
       let imageData = new Uint8Array(response.data)

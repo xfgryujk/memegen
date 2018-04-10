@@ -14,6 +14,7 @@
 
 <script>
 import templateList from './templateList'
+import { STATIC_URL } from './settings'
 import { Template } from './memegen'
 
 export default {
@@ -51,7 +52,7 @@ export default {
         return
       }
 
-      this.imageSrc = `static/${this.templateId}/example${this.templateInfo.extension}`
+      this.imageSrc = `${STATIC_URL}/${this.templateId}/example${this.templateInfo.extension}`
       this.template = new Template(this.templateId)
     },
     async generate () {
