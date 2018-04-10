@@ -1,0 +1,27 @@
+[
+    {
+        "default": "（稍加思考）",
+        "startTime": 0.8,
+        "endTime": 3.2
+    },
+    {
+        "default": "穿西装打领带",
+        "startTime": 3.2,
+        "endTime": 4.4
+    },
+    {
+        "default": "拿大哥大有什么用",
+        "startTime": 4.4,
+        "endTime": 6
+    },
+    {
+        "default": "跟着这样的大哥",
+        "startTime": 8,
+        "endTime": 9
+    },
+    {
+        "default": "吔屎啦你",
+        "startTime": 12,
+        "endTime": 13.4
+    }
+]

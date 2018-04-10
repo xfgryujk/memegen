@@ -1,0 +1,52 @@
+[
+    {
+        "default": "你当着所有人的面前大声说",
+        "startTime": 1.4,
+        "endTime": 4.4
+    },
+    {
+        "default": "对不起，非凡哥",
+        "startTime": 4.4,
+        "endTime": 5.8
+    },
+    {
+        "default": "我听不到你再说",
+        "startTime": 6.2,
+        "endTime": 7.2
+    },
+    {
+        "default": "再听不到你再说",
+        "startTime": 7.2,
+        "endTime": 8.4
+    },
+    {
+        "default": "说到我听到为止",
+        "startTime": 8.4,
+        "endTime": 9.4
+    },
+    {
+        "default": "报告非凡哥",
+        "startTime": 9.4,
+        "endTime": 10.6
+    },
+    {
+        "default": "不用到操场了",
+        "startTime": 11,
+        "endTime": 12
+    },
+    {
+        "default": "我现在在这里说都行",
+        "startTime": 12.6,
+        "endTime": 13.8
+    },
+    {
+        "default": "都是六个字",
+        "startTime": 14.4,
+        "endTime": 15.4
+    },
+    {
+        "default": "吔屎啦梁非凡",
+        "startTime": 15.8,
+        "endTime": 18
+    }
+]
