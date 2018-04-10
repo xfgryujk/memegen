@@ -7,8 +7,16 @@
         "name": "真香",
         "extension": ".gif"
     },
+    "jinkela": {
+        "name": "金坷垃",
+        "extension": ".gif"
+    },
     "dagong": {
         "name": "窃格瓦拉",
+        "extension": ".gif"
+    },
+    "lianliankan": {
+        "name": "星际还是魔兽",
         "extension": ".gif"
     }
 }

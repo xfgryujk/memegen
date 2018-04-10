@@ -52,11 +52,11 @@ export class Template {
     let canvas = document.createElement('canvas');
     [canvas.width, canvas.height] = [width, height]
     let ctx = canvas.getContext('2d')
-    ctx.font = "20px 'Microsoft YaHei',sans-serif"
+    ctx.font = "20px 'Microsoft YaHei', sans-serif"
     ctx.textAlign = 'center'
     ctx.textBaseline = 'bottom'
     ctx.fillStyle = 'white'
-    ctx.lineWidth = 3.5
+    ctx.lineWidth = 3
     ctx.lineJoin = 'round'
 
     // Init GIF encoder

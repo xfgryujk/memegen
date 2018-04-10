@@ -1,0 +1,22 @@
+[
+    {
+        "default": "你平时打电子游戏吗",
+        "startTime": 0.4,
+        "endTime": 1.87
+    },
+    {
+        "default": "偶尔",
+        "startTime": 3.03,
+        "endTime": 3.73
+    },
+    {
+        "default": "星际还是魔兽",
+        "startTime": 3.73,
+        "endTime": 5.63
+    },
+    {
+        "default": "连连看",
+        "startTime": 7.07,
+        "endTime": 7.87
+    }
+]
