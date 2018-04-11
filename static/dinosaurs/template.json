@@ -1,0 +1,52 @@
+[
+    {
+        "default": "妈妈，这是什么",
+        "startTime": 0.8,
+        "endTime": 2.6
+    },
+    {
+        "default": "毛线球",
+        "startTime": 3,
+        "endTime": 4.2
+    },
+    {
+        "default": "我的球",
+        "startTime": 5.6,
+        "endTime": 6.6
+    },
+    {
+        "default": "不，那是个毛线",
+        "startTime": 7,
+        "endTime": 7.8
+    },
+    {
+        "default": "我要给你姐姐织新的毛衣",
+        "startTime": 7.8,
+        "endTime": 9.6
+    },
+    {
+        "default": "我的球",
+        "startTime": 9.6,
+        "endTime": 10.6
+    },
+    {
+        "default": "不，我要用它",
+        "startTime": 10.6,
+        "endTime": 11.8
+    },
+    {
+        "default": "我的球",
+        "startTime": 11.8,
+        "endTime": 12.8
+    },
+    {
+        "default": "我在试着向你解释",
+        "startTime": 12.8,
+        "endTime": 14.4
+    },
+    {
+        "default": "我的球",
+        "startTime": 14.4,
+        "endTime": 15.8
+    }
+]
