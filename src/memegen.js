@@ -161,10 +161,11 @@ class StaticImageGenerator extends ImageGenerator {
       }
 
       let text = textInfo.text || textInfo.default
+      let maxWidth = textInfo.maxWidth || width
       if (strokeStyle) {
-        ctx.strokeText(text, textInfo.x, textInfo.y)
+        ctx.strokeText(text, textInfo.x, textInfo.y, maxWidth)
       }
-      ctx.fillText(text, textInfo.x, textInfo.y)
+      ctx.fillText(text, textInfo.x, textInfo.y, maxWidth)
     }
 
     return canvas.toDataURL()

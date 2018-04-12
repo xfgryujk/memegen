@@ -38,5 +38,9 @@
     "pu": {
         "name": "发出噗的声音",
         "extension": ".png"
+    },
+    "lovelive": {
+        "name": "再表演一下那个",
+        "extension": ".png"
     }
 }
