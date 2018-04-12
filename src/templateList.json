@@ -34,5 +34,9 @@
     "dinosaurs": {
         "name": "恐龙家族",
         "extension": ".gif"
+    },
+    "pu": {
+        "name": "发出噗的声音",
+        "extension": ".png"
     }
 }

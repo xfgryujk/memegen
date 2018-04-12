@@ -37,15 +37,15 @@ export default {
     progress () {
       if (!this.template) {
         return -1 // Don't show progress
-      } else if (this.template.isLoading()) {
-        return this.template.getLoadingProgress() * 100
-      } else if (this.template.isGenerating()) {
-        return this.template.getGeneratingProgress() * 100
+      } else if (this.template.isLoading) {
+        return this.template.loadingProgress * 100
+      } else if (this.template.isGenerating) {
+        return this.template.generatingProgress * 100
       }
       return -1
     },
     isBusy () {
-      return this.template.isLoading() || this.template.isGenerating()
+      return this.template.isLoading || this.template.isGenerating
     }
   },
   watch: {
@@ -74,8 +74,7 @@ export default {
         return
       }
 
-      let resultBlob = await this.template.generate()
-      this.imageSrc = window.URL.createObjectURL(resultBlob)
+      this.imageSrc = await this.template.generate()
       this.showSuccess = true
     }
   }

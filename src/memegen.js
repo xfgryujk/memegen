@@ -5,68 +5,66 @@ import axios from 'axios'
 import templateList from './templateList'
 import { STATIC_URL } from './settings'
 
-export class Template {
-  constructor (id) {
-    // In templateList.json
-    this.id = id
-    let templateInfo = templateList[id]
-    this.name = templateInfo.name
-    this.extension = templateInfo.extension
+class ImageGenerator {
+  constructor (textInfo) {
+    this.DEFAULT_FONT_SIZE = 20
+    this.DEFAULT_FONT_FAMILY = "'Microsoft YaHei', sans-serif"
+    this.DEFAULT_FILL_STYLE = 'white'
+    this.DEFAULT_STROKE_STYLE = 'black'
 
-    // To calculate loading progress
-    this._templateTotalLength = this._imageTotalLength = 2 * 1024 * 1024
-    this._templateLoadedLength = this._imageLoadedLength = 0
+    this._textInfo = textInfo
+  }
 
-    // In static/<id>/template.json
-    this.textInfo = []
-    axios.get(`${STATIC_URL}/${this.id}/template.json`, {
-      onDownloadProgress: event => {
-        [this._templateTotalLength, this._templateLoadedLength] = [event.total, event.loaded]
-      }
-    }).then(response => {
-      let textInfo = response.data
-      for (let info of textInfo) {
-        info.text = ''
-      }
-      this.textInfo = textInfo
-    })
+  get isGenerating () {
+    return false
+  }
 
-    this._gifReader = null
-    axios.get(`${STATIC_URL}/${this.id}/template${templateInfo.extension}`, {
-      responseType: 'arraybuffer',
-      onDownloadProgress: event => {
-        [this._imageTotalLength, this._imageLoadedLength] = [event.total, event.loaded]
-      }
-    }).then(response => {
-      let imageData = new Uint8Array(response.data)
-      this._gifReader = new omggif.GifReader(imageData)
-    })
+  // Range: [0, 1]
+  get generatingProgress () {
+    return 0
+  }
+
+  async generate () {
+    return null
+  }
+
+  _createCanvasContext (width, height) {
+    let canvas = document.createElement('canvas');
+    [canvas.width, canvas.height] = [width, height]
+    let ctx = canvas.getContext('2d')
+    ctx.font = `${this.DEFAULT_FONT_SIZE}px ${this.DEFAULT_FONT_FAMILY}`
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'bottom'
+    ctx.fillStyle = this.DEFAULT_FILL_STYLE
+    if (this.DEFAULT_STROKE_STYLE) {
+      ctx.strokeStyle = this.DEFAULT_STROKE_STYLE
+    }
+    ctx.lineWidth = 3
+    ctx.lineJoin = 'round'
+    return [canvas, ctx]
+  }
+}
+
+class GifGenerator extends ImageGenerator {
+  constructor (textInfo, imageData) {
+    super(textInfo)
+    this._gifReader = new omggif.GifReader(imageData)
 
     // -1 means not generating
     this._generatingProgress = -1
   }
 
-  isLoading () {
-    return this.textInfo.length === 0 || this._gifReader == null
-  }
-
-  isGenerating () {
+  get isGenerating () {
     return this._generatingProgress >= 0
   }
 
   // Range: [0, 1]
-  getLoadingProgress () {
-    return (this._templateLoadedLength + this._imageLoadedLength) /
-           (this._templateTotalLength + this._imageTotalLength)
-  }
-
-  // Range: [0, 1]
-  getGeneratingProgress () {
+  get generatingProgress () {
     return this._generatingProgress >= 0 ? this._generatingProgress : 0
   }
 
   async generate () {
-    if (this.isLoading() || this.isGenerating()) {
+    if (this.isGenerating) {
       return null
     }
     this._generatingProgress = 0
@@ -76,15 +74,7 @@ export class Template {
     let [width, height] = [frame0Info.width, frame0Info.height]
 
     // Init canvas
-    let canvas = document.createElement('canvas');
-    [canvas.width, canvas.height] = [width, height]
-    let ctx = canvas.getContext('2d')
-    ctx.font = "20px 'Microsoft YaHei', sans-serif"
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'bottom'
-    ctx.fillStyle = 'white'
-    ctx.lineWidth = 3
-    ctx.lineJoin = 'round'
+    let [, ctx] = this._createCanvasContext(width, height)
 
     // Init GIF encoder
     let gif = new GIF({
@@ -107,8 +97,8 @@ export class Template {
 
       // Add text
       let frameInfo = this._gifReader.frameInfo(i)
-      if (textIndex < this.textInfo.length) {
-        let textInfo = this.textInfo[textIndex]
+      if (textIndex < this._textInfo.length) {
+        let textInfo = this._textInfo[textIndex]
         if (textInfo.startTime <= time && time < textInfo.endTime) {
           let text = textInfo.text || textInfo.default
           ctx.strokeText(text, width / 2, height - 5, width)
@@ -134,9 +124,133 @@ export class Template {
       })
       gif.on('finished', blob => {
         this._generatingProgress = -1
-        resolve(blob)
+        resolve(window.URL.createObjectURL(blob))
       })
       gif.render()
     })
+  }
+}
+
+class StaticImageGenerator extends ImageGenerator {
+  constructor (textInfo, imageData) {
+    super(textInfo)
+    this.DEFAULT_FILL_STYLE = 'black'
+    this.DEFAULT_STROKE_STYLE = null
+
+    let blob = new window.Blob([imageData])
+    this._image = new window.Image()
+    this._image.src = window.URL.createObjectURL(blob)
+  }
+
+  async generate () {
+    // Init canvas
+    let [width, height] = [this._image.width, this._image.height]
+    let [canvas, ctx] = this._createCanvasContext(width, height)
+    ctx.drawImage(this._image, 0, 0)
+
+    // Add texts
+    for (let textInfo of this._textInfo) {
+      let fontSize = textInfo.size || this.DEFAULT_FONT_SIZE
+      let fontFamily = textInfo.font || this.DEFAULT_FONT_FAMILY
+      let fillStyle = textInfo.color || this.DEFAULT_FILL_STYLE
+      let strokeStyle = textInfo.strokeColor || this.DEFAULT_STROKE_STYLE
+      ctx.font = `${fontSize}px ${fontFamily}`
+      ctx.fillStyle = fillStyle
+      if (strokeStyle) {
+        ctx.strokeStyle = strokeStyle
+      }
+
+      let text = textInfo.text || textInfo.default
+      if (strokeStyle) {
+        ctx.strokeText(text, textInfo.x, textInfo.y)
+      }
+      ctx.fillText(text, textInfo.x, textInfo.y)
+    }
+
+    return canvas.toDataURL()
+  }
+}
+
+export class Template {
+  constructor (id) {
+    // In templateList.json
+    this.id = id
+    let templateInfo = templateList[id]
+    this.name = templateInfo.name
+    this.extension = templateInfo.extension
+
+    // To calculate loading progress
+    this._templateTotalLength = this._imageTotalLength = 2 * 1024 * 1024
+    this._templateLoadedLength = this._imageLoadedLength = 0
+
+    // In static/<id>/template.json
+    this.textInfo = []
+    // Temporary variable to create generator
+    this._imageData = null
+
+    axios.get(`${STATIC_URL}/${this.id}/template.json`, {
+      onDownloadProgress: event => {
+        [this._templateTotalLength, this._templateLoadedLength] = [event.total, event.loaded]
+      }
+    }).then(response => {
+      let textInfo = response.data
+      for (let info of textInfo) {
+        info.text = ''
+      }
+      this.textInfo = textInfo
+
+      if (this._imageData != null) {
+        this._onLoadFinished()
+      }
+    })
+
+    this._generator = null
+    axios.get(`${STATIC_URL}/${this.id}/template${templateInfo.extension}`, {
+      responseType: 'arraybuffer',
+      onDownloadProgress: event => {
+        [this._imageTotalLength, this._imageLoadedLength] = [event.total, event.loaded]
+      }
+    }).then(response => {
+      this._imageData = new Uint8Array(response.data)
+
+      if (this.textInfo.length !== 0) {
+        this._onLoadFinished()
+      }
+    })
+  }
+
+  get isLoading () {
+    return this._generator == null
+  }
+
+  get isGenerating () {
+    return this._generator.isGenerating
+  }
+
+  // Range: [0, 1]
+  get loadingProgress () {
+    return (this._templateLoadedLength + this._imageLoadedLength) /
+           (this._templateTotalLength + this._imageTotalLength)
+  }
+
+  // Range: [0, 1]
+  get generatingProgress () {
+    return this._generator.generatingProgress
+  }
+
+  _onLoadFinished () {
+    if (this.extension === '.gif') {
+      this._generator = new GifGenerator(this.textInfo, this._imageData)
+    } else {
+      this._generator = new StaticImageGenerator(this.textInfo, this._imageData)
+    }
+    delete this._imageData
+  }
+
+  async generate () {
+    if (this.isLoading || this.isGenerating) {
+      return null
+    }
+    return this._generator.generate()
   }
 }
