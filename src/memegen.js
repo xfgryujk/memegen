@@ -3,12 +3,13 @@ import GIF from 'gif.js.optimized'
 import axios from 'axios'
 
 import templateList from './templateList'
+import { drawText } from './textUtils'
 import { STATIC_URL } from './settings'
 
 class ImageGenerator {
   constructor (textInfo) {
     this.DEFAULT_FONT_SIZE = 20
-    this.DEFAULT_FONT_FAMILY = "'Microsoft YaHei', sans-serif"
+    this.DEFAULT_FONT_FAMILY = "'Microsoft YaHei'"
     this.DEFAULT_FILL_STYLE = 'white'
     this.DEFAULT_STROKE_STYLE = 'black'
 
@@ -25,14 +26,15 @@ class ImageGenerator {
   }
 
   async generate () {
-    return null
+    return ''
   }
 
   _createCanvasContext (width, height) {
     let canvas = document.createElement('canvas');
     [canvas.width, canvas.height] = [width, height]
     let ctx = canvas.getContext('2d')
-    ctx.font = `${this.DEFAULT_FONT_SIZE}px ${this.DEFAULT_FONT_FAMILY}`
+    let fontFamily = this.DEFAULT_FONT_FAMILY ? `${this.DEFAULT_FONT_FAMILY}, sans-serif` : 'sans-serif'
+    ctx.font = `${this.DEFAULT_FONT_SIZE}px ${fontFamily}`
     ctx.textAlign = 'center'
     ctx.textBaseline = 'bottom'
     ctx.fillStyle = this.DEFAULT_FILL_STYLE
@@ -151,7 +153,8 @@ class StaticImageGenerator extends ImageGenerator {
     // Add texts
     for (let textInfo of this._textInfo) {
       let fontSize = textInfo.size || this.DEFAULT_FONT_SIZE
-      let fontFamily = textInfo.font || this.DEFAULT_FONT_FAMILY
+      let fontFamily = textInfo.font == null ? this.DEFAULT_FONT_FAMILY : textInfo.font
+      fontFamily = fontFamily ? `${fontFamily}, sans-serif` : 'sans-serif'
       let fillStyle = textInfo.color || this.DEFAULT_FILL_STYLE
       let strokeStyle = textInfo.strokeColor || this.DEFAULT_STROKE_STYLE
       ctx.font = `${fontSize}px ${fontFamily}`
@@ -161,11 +164,9 @@ class StaticImageGenerator extends ImageGenerator {
       }
 
       let text = textInfo.text || textInfo.default
-      let maxWidth = textInfo.maxWidth || width
-      if (strokeStyle) {
-        ctx.strokeText(text, textInfo.x, textInfo.y, maxWidth)
-      }
-      ctx.fillText(text, textInfo.x, textInfo.y, maxWidth)
+      let maxWidth = textInfo.width || (width - textInfo.x)
+      let maxHeight = textInfo.height || (height - textInfo.y)
+      drawText(ctx, text, textInfo.x, textInfo.y, maxWidth, maxHeight, strokeStyle, textInfo.isVertical)
     }
 
     return canvas.toDataURL()
@@ -250,7 +251,7 @@ export class Template {
 
   async generate () {
     if (this.isLoading || this.isGenerating) {
-      return null
+      return ''
     }
     return this._generator.generate()
   }

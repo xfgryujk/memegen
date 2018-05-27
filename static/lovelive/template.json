@@ -1,16 +1,18 @@
 [
     {
         "default": "学校的同意？",
-        "x": 93,
-        "y": 394,
-        "size": 15,
-        "maxWidth": 182
+        "x": 2,
+        "y": 374,
+        "width": 182,
+        "height": 20,
+        "size": 15
     },
     {
         "default": "我才不认可！",
-        "x": 93,
-        "y": 553,
-        "size": 15,
-        "maxWidth": 182
+        "x": 2,
+        "y": 533,
+        "width": 182,
+        "height": 20,
+        "size": 15
     }
 ]
