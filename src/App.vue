@@ -18,7 +18,7 @@
 import download from 'downloadjs'
 
 import templateList from './templateList'
-import { STATIC_URL } from './settings'
+import { TEMPLATES_URL } from './settings'
 import { Template } from './memegen'
 
 export default {
@@ -67,7 +67,7 @@ export default {
         return
       }
 
-      this.imageSrc = `${STATIC_URL}/${this.templateId}/example${this.templateInfo.extension}`
+      this.imageSrc = `${TEMPLATES_URL}/${this.templateId}/example${this.templateInfo.extension}`
       this.template = new Template(this.templateId)
     },
     async generate () {

@@ -1,4 +1,4 @@
-const DEBUG = true
+const DEBUG = false
 
 // Supports multiline, wrapping, vertical text...
 export function drawText (ctx, text, x, y, width, height, hasStroke = false, isVertical = false) {

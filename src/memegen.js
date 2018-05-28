@@ -4,7 +4,7 @@ import axios from 'axios'
 
 import templateList from './templateList'
 import { drawText } from './textUtils'
-import { STATIC_URL } from './settings'
+import { TEMPLATES_URL } from './settings'
 
 class ImageGenerator {
   constructor (textInfo) {
@@ -199,7 +199,7 @@ export class Template {
     // Temporary variable to create generator
     this._imageData = null
 
-    axios.get(`${STATIC_URL}/${this.id}/template.json`, {
+    axios.get(`${TEMPLATES_URL}/${this.id}/template.json`, {
       onDownloadProgress: event => {
         [this._templateTotalLength, this._templateLoadedLength] = [event.total, event.loaded]
       }
@@ -216,7 +216,7 @@ export class Template {
     })
 
     this._generator = null
-    axios.get(`${STATIC_URL}/${this.id}/template${templateInfo.extension}`, {
+    axios.get(`${TEMPLATES_URL}/${this.id}/template${templateInfo.extension}`, {
       responseType: 'arraybuffer',
       onDownloadProgress: event => {
         [this._imageTotalLength, this._imageLoadedLength] = [event.total, event.loaded]
