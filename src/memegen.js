@@ -173,9 +173,11 @@ class StaticImageGenerator extends ImageGenerator {
       }
 
       let text = textInfo.text || textInfo.default
-      let maxWidth = textInfo.width || (width - textInfo.x)
-      let maxHeight = textInfo.height || (height - textInfo.y)
-      drawText(ctx, text, textInfo.x, textInfo.y, maxWidth, maxHeight, strokeStyle, textInfo.isVertical)
+      let x = textInfo.x || 0
+      let y = textInfo.y || 0
+      let maxWidth = textInfo.width || (width - x)
+      let maxHeight = textInfo.height || (height - y)
+      drawText(ctx, text, x, y, maxWidth, maxHeight, strokeStyle, textInfo.isVertical)
     }
 
     return canvas.toDataURL()

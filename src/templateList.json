@@ -42,5 +42,21 @@
     "lovelive": {
         "name": "再表演一下那个",
         "extension": ".png"
+    },
+    "wish": {
+        "name": "许愿",
+        "extension": ".png"
+    },
+    "pressure": {
+        "name": "困境压力痛苦",
+        "extension": ".png"
+    },
+    "yourmomandi": {
+        "name": "我和你妈妈会永远爱你",
+        "extension": ".png"
+    },
+    "meeting": {
+        "name": "开会",
+        "extension": ".png"
     }
 }

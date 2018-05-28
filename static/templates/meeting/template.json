@@ -1,0 +1,30 @@
+[
+    {
+        "default": "代码缩进用什么？",
+        "x": 31,
+        "y": 10,
+        "width": 382,
+        "height": 48
+    },
+    {
+        "default": "空格",
+        "x": 25,
+        "y": 233,
+        "width": 88,
+        "height": 26
+    },
+    {
+        "default": "tab",
+        "x": 139,
+        "y": 238,
+        "width": 107,
+        "height": 31
+    },
+    {
+        "default": "都用",
+        "x": 295,
+        "y": 251,
+        "width": 119,
+        "height": 30
+    }
+]
