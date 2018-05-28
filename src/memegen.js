@@ -125,8 +125,17 @@ class GifGenerator extends ImageGenerator {
         this._generatingProgress = progress
       })
       gif.on('finished', blob => {
-        this._generatingProgress = -1
-        resolve(window.URL.createObjectURL(blob))
+        this._generatingProgress = 0.99
+        let reader = new window.FileReader()
+        reader.onload = () => {
+          this._generatingProgress = -1
+          resolve(reader.result)
+        }
+        reader.onerror = () => {
+          this._generatingProgress = -1
+          reject(new Error('Failed to read the Image.'))
+        }
+        reader.readAsDataURL(blob)
       })
       gif.render()
     })

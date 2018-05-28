@@ -9,11 +9,14 @@
         <b-form-input :id="`text-${index}`" type="text" v-model="textInfo.text" :placeholder="textInfo.default"></b-form-input>
       </b-form-group>
       <b-button type="submit" variant="primary" :disabled="isBusy">生成</b-button>
+      <b-button variant="primary" @click="saveImage()" :disabled="isBusy">保存</b-button>
     </b-form>
   </div>
 </template>
 
 <script>
+import download from 'downloadjs'
+
 import templateList from './templateList'
 import { STATIC_URL } from './settings'
 import { Template } from './memegen'
@@ -50,10 +53,8 @@ export default {
   },
   watch: {
     $route (to) {
+      this.showSuccess = false
       this.updateTemplate()
-    },
-    imageSrc (val, oldVal) {
-      window.URL.revokeObjectURL(oldVal)
     }
   },
   mounted () {
@@ -76,6 +77,9 @@ export default {
 
       this.imageSrc = await this.template.generate()
       this.showSuccess = true
+    },
+    saveImage () {
+      download(this.imageSrc, `${this.template.name}${this.template.extension}`)
     }
   }
 }
