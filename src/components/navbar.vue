@@ -1,9 +1,9 @@
 <template>
   <div>
     <b-navbar toggleable="md" type="dark" variant="dark">
-      <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
+      <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
       <b-navbar-brand href="#">memegen</b-navbar-brand>
-      <b-collapse is-nav id="nav_collapse">
+      <b-collapse is-nav id="nav-collapse">
         <b-navbar-nav>
           <b-nav-item href="#" v-b-modal.about-modal>关于</b-nav-item>
         </b-navbar-nav>

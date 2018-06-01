@@ -1,17 +1,17 @@
 <template>
-  <div v-if="templateInfo">
-    <h1>{{ templateInfo.name }}</h1>
+  <main class="py-md-3 pl-md-4" v-if="templateInfo">
+    <h1 class="py-3">{{ templateInfo.name }}</h1>
     <b-img fluid :src="imageSrc" />
-    <b-progress :value="progress" :max="100" animated v-if="progress >= 0"></b-progress>
-    <b-alert variant="success" dismissible :show="showSuccess" @dismissed="showSuccess=false">生成完毕</b-alert>
-    <b-form @submit.prevent="generate" v-if="template">
+    <b-progress class="my-3" :value="progress" :max="100" animated v-if="progress >= 0"></b-progress>
+    <b-alert class="my-3" variant="success" dismissible :show="showSuccess" @dismissed="showSuccess=false">生成完毕</b-alert>
+    <b-form class="my-3" @submit.prevent="generate" v-if="template">
       <b-form-group v-for="(textInfo, index) in template.textInfo" :key="index" :label="`第${index + 1}句`" :label-for="`text-${index}`">
         <b-form-input :id="`text-${index}`" type="text" v-model="textInfo.text" :placeholder="textInfo.default"></b-form-input>
       </b-form-group>
       <b-button type="submit" variant="primary" :disabled="isBusy">生成</b-button>
       <b-button variant="primary" @click="saveImage()" :disabled="isBusy">保存</b-button>
     </b-form>
-  </div>
+  </main>
 </template>
 
 <script>
@@ -84,15 +84,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-h1 {
-  margin-top: 1.5rem;
-  margin-bottom: 1rem;
-}
-
-.progress, .alert, form {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-}
-</style>
