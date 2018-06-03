@@ -9,7 +9,7 @@
         </svg>
       </button>
     </div>
-    <b-collapse tag="nav" is-nav vertical visible class="links py-3" id="sidebar-collapse">
+    <b-collapse tag="nav" is-nav vertical visible class="links d-md-block py-3" id="sidebar-collapse">
       <b-nav class="d-block">
         <b-nav-item v-for="(info, id) in templateList" :key="id" :to="`/${id}`">
           {{ info.name }}
